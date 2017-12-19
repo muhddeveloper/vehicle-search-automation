@@ -11,6 +11,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -22,13 +24,26 @@ import static org.openqa.selenium.By.*;
  */
 public class VehicleInformationFetcher {
 
-    private WebDriver driver = null;
+    private static final Logger LOG = LoggerFactory.getLogger(VehicleInformationFetcher.class);
 
 
-    public Vehicle getVehicleDetails(final String registrationNumber, final Browsers browsers) throws AutomationServiceException {
+    private final WebDriver driver;
+
+    public VehicleInformationFetcher(final Browsers browsers) {
+        this.driver = DriverFactory.getDriver(browsers);
+
+    }
+
+    public void stopBrowser() {
+        this.driver.quit();
+    }
+
+
+    public Vehicle getVehicleDetails(final String vehicleRegNumber) throws AutomationServiceException {
 
         try {
-            driver = DriverFactory.getDriver(browsers);
+
+            LOG.info("Opening the page {}", BaseConstants.VEHICLE_URL);
 
             //go to the url
             driver.get(BaseConstants.VEHICLE_URL);
@@ -43,7 +58,7 @@ public class VehicleInformationFetcher {
             startNowBtn.click();
 
             //add search value
-            fluentWait(id("Vrm")).sendKeys(registrationNumber);
+            fluentWait(id("Vrm")).sendKeys(vehicleRegNumber);
 
             //click search
             fluentWait(name("Continue")).click();
@@ -54,26 +69,29 @@ public class VehicleInformationFetcher {
             final List<WebElement> summaryElements = driver.findElements(className("list-summary-item"));
 
             if (summaryElements == null || summaryElements.isEmpty()) {
-                throw new AutomationServiceException("No data for the registration number:" + registrationNumber);
+                throw new AutomationServiceException("No data for the registration number:" + vehicleRegNumber);
             }
             final String make = summaryElements.get(1).findElements(tagName("span")).get(1).getText();
             final String color = summaryElements.get(2).findElements(tagName("span")).get(1).getText();
 
+            LOG.info("Make found {}", make);
+            LOG.info("Color found {}", color);
 
-            return new Vehicle(registrationNumber, make.trim(), color.trim());
+            return new Vehicle(vehicleRegNumber, color.trim(), make.trim());
         } catch (AutomationServiceException e) {
             throw e;
 
-        } finally {
-            if (driver != null) {
-                driver.quit();
-            }
         }
 
 
     }
 
 
+    /**
+     * Smart way to wait for element to come
+     * @param locator
+     * @return
+     */
     WebElement fluentWait(final By locator) {
         Wait<WebDriver> wait = new FluentWait<WebDriver>(driver)
                 .withTimeout(30, TimeUnit.SECONDS)

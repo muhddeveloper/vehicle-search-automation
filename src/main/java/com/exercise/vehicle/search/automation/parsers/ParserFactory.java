@@ -16,8 +16,9 @@ public class ParserFactory {
     private static final ExcelParser EXCEL_PARSER = new ExcelParser();
 
 
-    public IParser getParser(final String fileName) {
+    public static IParser getParser(final String fileName) {
         Validate.notNull(fileName, "File name required");
+
         final String extension = FilenameUtils.getExtension(fileName);
         if (Lists.newArrayList(MimeTypes.CSV.getExtensions()).contains(extension)) {
             return CSV_PARSER;
