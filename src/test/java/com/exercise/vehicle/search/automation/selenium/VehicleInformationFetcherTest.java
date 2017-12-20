@@ -21,7 +21,7 @@ public class VehicleInformationFetcherTest {
     public void test() throws AutomationServiceException, InterruptedException {
 
         final AutomationServiceImpl automationService = new AutomationServiceImpl();
-        final List<File> files = automationService.retrieveFiles("D:/automation", MimeTypes.CSV, MimeTypes.EXCEL);
+        final List<File> files = automationService.retrieveFiles(VehicleInformationFetcher.class.getResource("/test").getPath(), MimeTypes.CSV, MimeTypes.EXCEL);
 
         final VehicleInformationFetcher vehicleInformationFetcher = new VehicleInformationFetcher(Browsers.FIREFOX);
 
