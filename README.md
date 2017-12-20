@@ -8,6 +8,13 @@ Check out the project using clone or download the Zip.
 In your IDE import project as Existing project maven.
 
 
+*Directory for files*
+
+Directory is not hard-coded anywhere. It will be upto the consumer which will provide the directory location. The interface is added.
+
+The tests uses the directory inside the test resources folder
+
+
 **Technology Stack /Frameworks**
 
 Java 8  ,
@@ -25,6 +32,7 @@ Logback is implemented.
 AutomationServiceImpl is the main service which has two method. One is to display information about the file.
 
 retrieveFiles method to get the files based on the File Mime Types. Currenty CSV and Excel are supported.
+
 
 **Selenium**
 
